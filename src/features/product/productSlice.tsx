@@ -6,7 +6,7 @@ import { IProduct } from '../../interfaces/Product';
 interface productState {
    isLoading: boolean,
    isError: boolean,
-   error: null,
+   error: string | undefined,
    data: IProduct[],
    itemPerPage: number
    totalItem: number,
@@ -16,7 +16,7 @@ interface productState {
 const initialState = {
    isLoading: false,
    isError: false,
-   error: null,
+   error: '',
    data: [],
    itemPerPage: 0,
    totalItem: 0,
@@ -29,7 +29,7 @@ export const getProducts = createAsyncThunk(
          await getAll();
       } catch (error) {
          console.log(error);
-         console.log(rejectWithValue(error));
+         rejectWithValue(error)
       }
    }
 )
@@ -43,13 +43,14 @@ const productSlice = createSlice({
       builder.addCase(getProducts.pending, ({ isLoading }) => {
          isLoading = true;
       })
-      builder.addCase(getProducts.fulfilled, ({ isLoading, data }, { payload }) => {
+      builder.addCase(getProducts.fulfilled, ({ isLoading, data }, action) => {
          isLoading = false;
-         // data = payload;
+         // data = action.payload
       })
-      builder.addCase(getProducts.rejected, ({ isError, error, isLoading }, { payload }) => {
+      builder.addCase(getProducts.rejected, ({ isError, error, isLoading }, action) => {
          isLoading = true;
          isError = true;
+         error = action.error.message;
       })
    },
 });

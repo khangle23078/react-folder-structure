@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
+import { categoryApi } from "../services/category";
 import { productApi } from "../services/product";
 import categorySlice from "./category/categorySlice";
 import orderSlice from "./order/orderSlice";
@@ -12,10 +13,14 @@ export const store = configureStore({
       category: categorySlice,
       order: orderSlice,
       slider: sliderSlice,
+      [categoryApi.reducerPath]: categoryApi.reducer,
       [productApi.reducerPath]: productApi.reducer,
    },
    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(productApi.middleware)
+      getDefaultMiddleware().concat(
+         categoryApi.middleware,
+         productApi.middleware
+      )
 })
 
 setupListeners(store.dispatch)
